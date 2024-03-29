@@ -41,4 +41,9 @@
     <HintPath>..\..\..\..\.nuget\packages\projektanker.icons.avalonia\9.0.1\lib\netstandard2.0\Projektanker.Icons.Avalonia.dll</HintPath>
   </Reference>
 </ItemGroup>
+
+
+<ItemGroup>
+  <ProjectReference Include="..\PcSyncLib\PcSyncLib.csproj" />
+</ItemGroup>
 </Project>

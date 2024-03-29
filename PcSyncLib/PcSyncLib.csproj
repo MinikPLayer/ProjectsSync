@@ -7,7 +7,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Ignore" Version="0.1.50" />
+      <PackageReference Include="LibGit2Sharp" Version="0.30.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="lib\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="lib\git2-a418d9d.so">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
