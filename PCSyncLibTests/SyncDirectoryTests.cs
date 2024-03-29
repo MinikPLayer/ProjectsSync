@@ -16,7 +16,7 @@ public class SyncDirectoryTests
 
         SyncDirectory.Create(_tempPath);
         Assert.That(Directory.Exists(_tempPath));
-        Assert.That(Directory.Exists(Path.Combine(_tempPath, ".git_repo")));
+        Assert.That(Directory.Exists(Path.Combine(_tempPath, ".pcsync")));
     }
 
     [Test]
