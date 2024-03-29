@@ -40,14 +40,13 @@ public class FileScannerTests
     }
 
     [Test]
-    public void TestScanModified()
+    public void TestScanAll()
     {
         var lastSyncDate = DateTime.MinValue;
         var files = FileScanner.ScanModified(_testPath, lastSyncDate);
         var filesStr = string.Join(", ", files);
         Console.WriteLine("Got files: " + filesStr);
 
-        Assert.That(files.Count, Is.EqualTo(9));
         Assert.That(files, Contains.Item("file1.txt"));
         Assert.That(files, Contains.Item("file2.txt"));
         Assert.That(files, Contains.Item(".gitignore"));
@@ -61,5 +60,24 @@ public class FileScannerTests
 
         Assert.That(files, !Contains.Item(Path.Combine("test_dir2", "ignored_file.ign")));
         Assert.That(files, !Contains.Item(Path.Combine("test_dir2", "git_ignored", "ignored_dir_file.txt")));
+    }
+
+    [Test]
+    public void TestScanModified()
+    {
+        var now = DateTime.Now;
+
+        var files = FileScanner.ScanModified(_testPath, now);
+        Assert.That(files.Count, Is.EqualTo(0));
+
+        var file1Path = Path.Combine(_testPath, "file1.txt");
+        var ignoredFilePath = Path.Combine(_testPath, "ignored_file.txt");
+        File.AppendAllText(file1Path, "Modified file 1");
+        File.AppendAllText(ignoredFilePath, "Modified, but ignored file");
+
+        files = FileScanner.ScanModified(_testPath, now);
+        Assert.That(files.Count, Is.EqualTo(1));
+        Assert.That(files, Contains.Item("file1.txt"));
+        Assert.That(files, !Contains.Item("test_dir2/git_ignored/ignored_dir_file.txt"));
     }
 }
