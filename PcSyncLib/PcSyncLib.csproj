@@ -16,8 +16,16 @@
 
     <ItemGroup>
       <None Update="lib\git2-a418d9d.so">
+        <!-- <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> -->
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="lib\libpcsync2proxy.so">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
+
+    <PropertyGroup>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
 
 </Project>

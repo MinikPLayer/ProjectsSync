@@ -1,0 +1,8 @@
+{
+    "profiles": {
+      "PcSyncLibCLI": {
+        "commandName": "Project",
+        "commandLineArgs": "pull /home/minik/temp/repos_test"
+      }
+    }
+  }
