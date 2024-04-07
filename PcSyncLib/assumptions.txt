@@ -1,8 +1,0 @@
-* How to decide what to sync:
-    - Create a list of all the files in the source directory with their last modified time
-    - Do the same on the server side
-    - Compare files on the source and server side
-        - If src_date > last_sync_date -> upload = 1
-        - If server_date > last_sync_date -> download = 1
-        - If upload == 1 && download == 1 -> conflict (ask user)
-    - Sync the files
