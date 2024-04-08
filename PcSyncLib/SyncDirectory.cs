@@ -84,7 +84,7 @@ public class SyncDirectory
         _repo.Network.Remotes.Add("origin", url);
     }
 
-    public void CommitAndPush(PushTransferProgressHandler? pushHandler = null, PackBuilderProgressHandler? packHandler = null, Action<string>? errorHandler = null)
+    public void CommitAndPush(bool force, PushTransferProgressHandler? pushHandler = null, PackBuilderProgressHandler? packHandler = null, Action<string>? errorHandler = null, Action<string>? logHandler = null)
     {
         var remote = _repo.Network.Remotes["origin"];
         if (remote == null)
@@ -102,11 +102,15 @@ public class SyncDirectory
             catch (Exception e)
             {
                 errorHandler?.Invoke("ERROR: Failed to commit - " + e.Message);
+                if(!force)
+                    return;
             }
         }
         else
         {
-            errorHandler?.Invoke("Nothing to commit, working tree clean");
+            logHandler?.Invoke("Nothing to commit, working tree clean");
+            if(!force)
+                return;
         }
 
         _repo.Network.Push(
@@ -123,8 +127,11 @@ public class SyncDirectory
 
     }
 
-    public void CommitAndPush(Action<string> logAction)
+    public void CommitAndPush(bool force, Action<string> logAction, bool addAll = true)
     {
+        if(addAll)
+            AddAll();
+
         var pushHandler = new PushTransferProgressHandler((current, total, bytes) =>
         {
             logAction($"[Push] {current}/{total} ({bytes} bytes)");
@@ -138,12 +145,15 @@ public class SyncDirectory
         });
 
         var errorHandler = new Action<string>((e) => logAction("[Push ERROR] " + e));
+        var logHandler = new Action<string>((s) => logAction("[Push] " + s));
 
-        CommitAndPush(pushHandler, packHandler, errorHandler);
+        CommitAndPush(force, pushHandler, packHandler, errorHandler, logHandler);
     }
 
-    public string StatusString()
+    public string StatusString(bool addAll = true)
     {
+        if(addAll)
+            AddAll();
 
         var status = _repo.RetrieveStatus();
         var ret = "On branch " + _repo.Head.FriendlyName + "\n\n";
@@ -187,8 +197,11 @@ public class SyncDirectory
         Console.WriteLine(StatusString());
     }
 
-    public void Pull(Action<string> logHandler)
+    public void Pull(Action<string> logHandler, bool addAll = true)
     {
+        if(addAll)
+            AddAll();
+
         var options = new PullOptions
         {
             FetchOptions = new FetchOptions

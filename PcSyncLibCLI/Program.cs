@@ -93,7 +93,7 @@ static class Program
         PrintHelpEntry("pcsync help", "Displays this help message.");
         PrintHelpEntry("pcsync clone <url> [path]", "Clonse repository under <url> to the specified [path]. \nIf path is not specified a new directory is created with a name guessed from the <url>.");
         PrintHelpEntry("pcsync pull [path]", "Pulls changes to repository under [path]. \nIf [path] is not specified current directory is used.");
-        PrintHelpEntry("pcsync push [path]", "Pushes changes to repository under [path]. \nIf [path] is not specified current directory is used.");
+        PrintHelpEntry("pcsync push [path] [--force]", "Pushes changes to repository under [path]. \nIf [path] is not specified current directory is used.");
         PrintHelpEntry("pcsync status [path]", "Displays status for repository under [path]. \nIf [path] is not specified current directory is used.");
     }
 
@@ -118,7 +118,7 @@ static class Program
             
             var url = args[2];
             if(!url.EndsWith(".git")) {
-                Console.WriteLine("Only HTTP/HTTPS protocol is supported. URL must end with .git");
+                Console.WriteLine("[Error] Only HTTP/HTTPS protocol is supported. URL must end with .git");
                 return;
             }
             
@@ -133,7 +133,7 @@ static class Program
 
                 if(string.IsNullOrEmpty(path))
                 {
-                    Console.WriteLine("Could not guess directory name. Please provide one.");
+                    Console.WriteLine("[Error] Could not guess directory name. Please provide one.");
                     return;
                 }
 
@@ -154,9 +154,20 @@ static class Program
             return;
         }
 
+        bool force = false;
         if(args.Length > 2) {
-            path = args[2];
+            if(args[2] == "--force") {
+                force = true;
+            }
+            else {
+                path = args[2];
+                if(args.Length > 3 && args[3] == "--force") {
+                    force = true;
+                }
+            }
         }
+
+        Console.WriteLine($"[Info] Using directory \"{path}\"");
 
         SyncDirectory repo;
         try
@@ -165,30 +176,27 @@ static class Program
         }
         catch (ArgumentException e)
         {
-            Console.WriteLine("Repository open exception: " + e.Message);
+            Console.WriteLine("[Error] Repository open exception: " + e.Message);
             return;
         }
-
-        File.AppendAllText(Path.Combine(repo.Path, "test.txt"), DateTime.Now.ToString());
-        repo.AddAll();
 
         switch(command)
         {
             case "status":
-                Console.WriteLine("Generating repo status...");
-                Console.WriteLine(repo.StatusString());
+                Console.WriteLine("[Info] Generating repo status...\n");
+                Console.WriteLine("Status:\n" + repo.StatusString());
                 return;
 
             case "push":
-                Console.WriteLine("Pushing changes...");
-                repo.CommitAndPush((s) => Console.WriteLine("LOG: " + s));
-                Console.WriteLine("Pushing finished.");
+                Console.WriteLine("[Info] Pushing changes...\n");
+                repo.CommitAndPush(force, Console.WriteLine);
+                Console.WriteLine("\n[Info] Pushing finished.");
                 return;
 
             case "pull":
-                Console.WriteLine("Pulling changes...");
-                repo.Pull((s) => Console.WriteLine("LOG: " + s));
-                Console.WriteLine("Pulling finished.");
+                Console.WriteLine("[Info] Pulling changes...\n");
+                repo.Pull(Console.WriteLine);
+                Console.WriteLine("\n[Info] Pulling finished.");
                 return;
 
             default:
