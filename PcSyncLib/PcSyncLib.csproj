@@ -16,12 +16,15 @@
 
     <ItemGroup>
       <None Update="lib\git2-a418d9d.so">
-        <!-- <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory> -->
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
       <None Update="lib\libpcsync2proxy.so">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Simple.CredentialsManager\src\Simple.CredentialManager\Simple.CredentialManager.csproj" />
     </ItemGroup>
 
     <PropertyGroup>

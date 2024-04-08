@@ -1,9 +1,11 @@
 using System.Reflection;
+using System.Runtime.Versioning;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
 
 namespace PcSyncLib;
 
+[SupportedOSPlatform("Linux")]
 public class SyncDirectory
 {
     public delegate Credentials UserProvidedCredentialsHandler(string url, SupportedCredentialTypes types);

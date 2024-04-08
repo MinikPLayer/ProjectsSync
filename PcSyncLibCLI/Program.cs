@@ -1,10 +1,13 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using LibGit2Sharp;
 using PcSyncLib;
 
 namespace PcSyncLibCLI;
+
+[SupportedOSPlatform("Linux")]
 static class Program
 {       
 
@@ -46,36 +49,67 @@ static class Program
     // TODO: Add saving credentials using libsecret.
     private static UsernamePasswordCredentials AskForCredentials(string url, SupportedCredentialTypes types)
     {
+        if(SecureStorage.TryGetPassword(url, out var secureCreds))
+            return secureCreds!;
+
         Console.WriteLine("\n=================  Auth  ===================");
         Console.WriteLine("Authentication required for " + url);
-        Console.WriteLine("(Consider using SSH authentication)");
         Console.Write("Username: ");
         var username = Console.ReadLine();
         var password = GetPasswordFromUser();
         Console.WriteLine("============================================\n");
-        return new UsernamePasswordCredentials
+
+        var creds = new UsernamePasswordCredentials
         {
             Username = username,
             Password = password
         };
+
+        if(SecureStorage.TrySavePassword(creds, url))
+        {
+            Console.WriteLine("[Info] Credentials saved using SecureStorage.");    
+        }
+        else 
+        {
+            Console.WriteLine("[Warning] Failed to save credentials using SecureStorage.");
+        }
+
+        return creds;
     }
 
-    static void PrintUsage()
+    static void PrintHelpEntry(string header, string description) 
     {
-        Console.WriteLine("Usage:");
-        Console.WriteLine("\tpcsync clone <url> [path]");
-        Console.WriteLine("\tpcsync <command> [path]");
+        Console.WriteLine($"\t- {header}");
+        description = description.Replace("\n", "\n\t\t");
+        Console.WriteLine($"\t\t{description}");
+        Console.WriteLine("");
     }
- 
-    static void Main()
+
+    static void PrintHelp()
     {
+        Console.WriteLine("PCSync CLI interface.");
+        Console.WriteLine("");
+
+        PrintHelpEntry("pcsync help", "Displays this help message.");
+        PrintHelpEntry("pcsync clone <url> [path]", "Clonse repository under <url> to the specified [path]. \nIf path is not specified a new directory is created with a name guessed from the <url>.");
+        PrintHelpEntry("pcsync pull [path]", "Pulls changes to repository under [path]. \nIf [path] is not specified current directory is used.");
+        PrintHelpEntry("pcsync push [path]", "Pushes changes to repository under [path]. \nIf [path] is not specified current directory is used.");
+        PrintHelpEntry("pcsync status [path]", "Displays status for repository under [path]. \nIf [path] is not specified current directory is used.");
+    }
+
+
+
+    static void Main()
+
+    {
+
         var workingCwd = Directory.GetCurrentDirectory();
         Console.WriteLine("Current working directory: " + workingCwd);
 
         var args = Environment.GetCommandLineArgs();
-        if (args.Length < 2)
+        if (args.Length < 2 || args[1] == "help")
         {
-            PrintUsage();
+            PrintHelp();
             return;
         }
 
@@ -90,8 +124,30 @@ static class Program
             }
             
             var url = args[2];
+            if(!url.EndsWith(".git")) {
+                Console.WriteLine("Only HTTP/HTTPS protocol is supported. URL must end with .git");
+                return;
+            }
+            
             if(args.Length > 3) {
                 path = args[3];
+            }
+            else {
+                // Try to guess directory name
+                var splitted = url.Split('/');
+                var dirName = splitted.Last();
+                dirName = dirName.Substring(0, dirName.Length - ".git".Length);
+
+                if(string.IsNullOrEmpty(dirName))
+                {
+                    Console.WriteLine("Could not guess directory name. Please provide one.");
+                    return;
+                }
+            }
+
+            if(Directory.EnumerateFileSystemEntries(path).Any()) {
+                Console.WriteLine("Directory already exists and is not empty.");
+                return;
             }
 
             var clonedRepo = SyncDirectory.Clone(url, path, signature, AskForCredentials, (s, _, _) => Console.WriteLine("[Checkout] " + s));
@@ -151,7 +207,7 @@ static class Program
                 return;
 
             default:
-                PrintUsage();
+                PrintHelp();
                 return;
         }
     }
