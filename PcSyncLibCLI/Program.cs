@@ -99,9 +99,6 @@ static class Program
 
     static void Main()
     {
-        var workingCwd = Directory.GetCurrentDirectory();
-        Console.WriteLine("Current working directory: " + workingCwd);
-
         var args = Environment.GetCommandLineArgs();
         if (args.Length < 2 || args[1] == "help")
         {
