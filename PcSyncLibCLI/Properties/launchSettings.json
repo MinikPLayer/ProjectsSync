@@ -2,7 +2,8 @@
     "profiles": {
       "PcSyncLibCLI": {
         "commandName": "Project",
-        "commandLineArgs": "help"
+        "workingDirectory": "/home/minik/temp",
+        "commandLineArgs": "clone http://home.mtomecki.pl:3000/minik/repos2.git",
       }
     }
   }

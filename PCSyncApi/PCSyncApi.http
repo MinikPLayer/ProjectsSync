@@ -1,6 +1,0 @@
-@PCSyncApi_HostAddress = http://localhost:5286
-
-GET {{PCSyncApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

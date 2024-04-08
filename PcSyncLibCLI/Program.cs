@@ -128,23 +128,29 @@ static class Program
             else {
                 // Try to guess directory name
                 var splitted = url.Split('/');
-                var dirName = splitted.Last();
-                dirName = dirName.Substring(0, dirName.Length - ".git".Length);
+                path = splitted.Last();
+                path = path.Substring(0, path.Length - ".git".Length);
 
-                if(string.IsNullOrEmpty(dirName))
+                if(string.IsNullOrEmpty(path))
                 {
                     Console.WriteLine("Could not guess directory name. Please provide one.");
                     return;
                 }
+
             }
 
-            if(Directory.EnumerateFileSystemEntries(path).Any()) {
-                Console.WriteLine("Directory already exists and is not empty.");
+            Console.WriteLine($"[Info] Using directory \"{path}\"");
+
+            if(Directory.Exists(path) && Directory.EnumerateFileSystemEntries(path).Any()) {
+                Console.WriteLine("[Error] Directory already exists and is not empty.");
                 return;
+            }
+            else {
+                Directory.CreateDirectory(path);
             }
 
             var clonedRepo = SyncDirectory.Clone(url, path, signature, AskForCredentials, (s, _, _) => Console.WriteLine("[Checkout] " + s));
-            Console.WriteLine("Repository cloned to " + clonedRepo.Path);
+            Console.WriteLine("[Info] Repository cloned to " + clonedRepo.Path);
             return;
         }
 
