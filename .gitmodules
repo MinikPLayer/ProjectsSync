@@ -1,0 +1,3 @@
+[submodule "PcSyncLib/Simple.CredentialsManager"]
+	path = PcSyncLib/Simple.CredentialsManager
+	url = https://github.com/MinikPLayer/Simple.CredentialsManager.git
