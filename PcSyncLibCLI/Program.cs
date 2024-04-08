@@ -97,12 +97,8 @@ static class Program
         PrintHelpEntry("pcsync status [path]", "Displays status for repository under [path]. \nIf [path] is not specified current directory is used.");
     }
 
-
-
     static void Main()
-
     {
-
         var workingCwd = Directory.GetCurrentDirectory();
         Console.WriteLine("Current working directory: " + workingCwd);
 
@@ -117,7 +113,7 @@ static class Program
         var signature = new Signature(machineName, "pcsynccli@mtomecki.pl", DateTimeOffset.Now);
         string path = Directory.GetCurrentDirectory();
         var command = args[1];
-        if(command == "clone") {
+        if(command == "clone" ) {
             if(args.Length < 3) {
                 Console.WriteLine("Usage: pcsync clone <url> [path]");
                 return;
@@ -166,22 +162,8 @@ static class Program
         }
         catch (ArgumentException e)
         {
-            Console.WriteLine("Repository open: " + e.Message);
-            try {
-                repo = SyncDirectory.Create(path, signature, AskForCredentials);
-                Console.WriteLine("Repository created at " + path);
-                Console.Write("Enter repository URL: ");
-                var url = Console.ReadLine();
-                if(url == null) {
-                    Console.WriteLine("URL not entered.");
-                    return;
-                }
-                repo.AddRemote(url);
-                
-            } catch (Exception e2) {
-                Console.WriteLine("Repository create: " +  e2.Message);
-                return;
-            }
+            Console.WriteLine("Repository open exception: " + e.Message);
+            return;
         }
 
         File.AppendAllText(Path.Combine(repo.Path, "test.txt"), DateTime.Now.ToString());
