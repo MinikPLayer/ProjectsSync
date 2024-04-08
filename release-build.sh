@@ -2,19 +2,12 @@
 
 set -e
 
-
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 if [ -z "${SCRIPT_DIR}" ]; then
 	echo "Cannot determine script location. Exiting"
 	exit 1
 fi
 
-#echo "Enter version string: "
-#read VERSION
-#if [ -z "$VERSION" ]; then
-#	echo "Empty version string. Exiting"
-#	exit 2
-#fi
 if [ $# = 0 ] || [ -z "$1" ]; then
 	echo "Usage: ./release-build.sh <version_string>"
 	exit 3
