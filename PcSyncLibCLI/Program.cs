@@ -10,7 +10,20 @@ namespace PcSyncLibCLI;
 [SupportedOSPlatform("Linux")]
 static class Program
 {
+    static string AppVersionString = "";
+
     const bool USE_PASSWORD_SECURE_STORAGE = true;
+
+    static Program()
+    {
+        if (string.IsNullOrEmpty(AppVersionString))
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            string version = fvi.FileVersion ?? "dev-unknown";
+            AppVersionString = version;
+        }
+    }
 
     private static string GetPasswordFromUser()
     {
@@ -100,7 +113,12 @@ static class Program
         var signature = new Signature(machineName, "pcsynccli@mtomecki.pl", DateTimeOffset.Now);
         string path = Directory.GetCurrentDirectory();
         var command = args[1];
-        if (command == "clone")
+        if (command == "version" || command == "--version")
+        {
+            Console.WriteLine($"Version: {AppVersionString}");
+            return;
+        }
+        else if (command == "clone")
         {
             if (args.Length < 3)
             {

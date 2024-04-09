@@ -20,6 +20,8 @@ if [ -d $BUILD_OUTPUT_DIR ]; then
 fi
 mkdir $BUILD_OUTPUT_DIR
 
+VERSION_FILE_NAME="version.txt"
+
 function build_and_pack() {
 	PROJECT_DIR=$1
 	PROJECT_NAME=$2
@@ -29,13 +31,18 @@ function build_and_pack() {
 	echo "Building $PROJECT..."
 	cd $SCRIPT_DIR/$PROJECT_DIR
 	dotnet clean
-	dotnet build -c Release
+	dotnet build -c Release /p:FileVersion="$VERSION"
 	cd bin/Release/$DOTNET_VERSION/
 	if [ $REMOVE_RUNTIMES = 1 ]; then
 		echo "Removing runtimes directory..."
 		rm -r ./runtimes
 	fi
 
+	if [ -e $VERSION_FILE_NAME ]; then
+		rm $VERSION_FILE_NAME
+	fi
+
+	echo "$VERSION" >> $VERSION_FILE_NAME
 	ZIP_FILE_NAME=${PROJECT_NAME}_${VERSION}_linux.zip
 	if [ -e $ZIP_FILE_NAME ]; then
 		rm $ZIP_FILE_NAME

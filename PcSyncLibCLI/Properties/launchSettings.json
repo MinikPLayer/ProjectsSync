@@ -2,7 +2,7 @@
     "profiles": {
       "PcSyncLibCLI": {
         "commandName": "Project",
-        "commandLineArgs": "pull /home/minik/temp/test",
+        "commandLineArgs": "version",
       }
     }
   }
