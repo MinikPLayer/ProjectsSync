@@ -18,7 +18,7 @@ public class MainViewModel : ViewModelBase
     private string? _username = null;
     private SecureString? _password = null;
 
-    private UsernamePasswordCredentials GetCredentials(string url, SupportedCredentialTypes types)
+    private UsernamePasswordCredentials GetCredentials(string url)
     {
         if (_username == null || _password == null)
         {
