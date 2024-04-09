@@ -8,14 +8,15 @@ namespace PcSyncLib;
 [SupportedOSPlatform("Linux")]
 public class SyncDirectory
 {
-    public delegate Credentials UserProvidedCredentialsHandler(string url, SupportedCredentialTypes types);
+    public delegate UsernamePasswordCredentials UserProvidedCredentialsHandler(string url);
 
     private Repository _repo;
     private Signature _signature;
     private UserProvidedCredentialsHandler _credentialsHandler;
     public string Path { get; }
+    public bool UsePasswordSecureStorage { get; }
 
-    private static CredentialsHandler GetCredentialsProvider(UserProvidedCredentialsHandler handler) => new CredentialsHandler((url, usernameFromUrl, types) => handler.Invoke(url, types));
+    private static CredentialsHandler GetCredentialsProvider(UserProvidedCredentialsHandler handler) => new CredentialsHandler((url, usernameFromUrl, types) => handler.Invoke(url));
 
     static SyncDirectory()
     {
@@ -41,24 +42,24 @@ public class SyncDirectory
         LibGit2Sharp.GlobalSettings.NativeLibraryPath = libDir;
     }
 
-    public static SyncDirectory Create(string path, Signature signature, UserProvidedCredentialsHandler credentialsProvider)
+    public static SyncDirectory Create(string path, Signature signature, UserProvidedCredentialsHandler credentialsProvider, bool usePasswordSecureStorage)
     {
         if (Repository.IsValid(path))
             throw new ArgumentException("Repository already exists at " + path, nameof(path));
 
         Repository.Init(path);
-        return new SyncDirectory(path, signature, credentialsProvider);
+        return new SyncDirectory(path, signature, credentialsProvider, usePasswordSecureStorage);
     }
 
-    public static SyncDirectory Open(string path, Signature signature, UserProvidedCredentialsHandler credentialsProvider)
+    public static SyncDirectory Open(string path, Signature signature, UserProvidedCredentialsHandler credentialsProvider, bool usePasswordSecureStorage)
     {
         if (!Repository.IsValid(path))
             throw new ArgumentException("Repository not found at " + path, nameof(path));
 
-        return new SyncDirectory(path, signature, credentialsProvider);
+        return new SyncDirectory(path, signature, credentialsProvider, usePasswordSecureStorage);
     }
 
-    public static SyncDirectory Clone(string url, string path, Signature signature, UserProvidedCredentialsHandler credentialsProvider, CheckoutProgressHandler? checkoutProgressHandler = null)
+    public static SyncDirectory Clone(string url, string path, Signature signature, UserProvidedCredentialsHandler credentialsProvider, bool usePasswordSecureStorage, CheckoutProgressHandler? checkoutProgressHandler = null)
     {
         var cloneOptions = new CloneOptions();
         cloneOptions.FetchOptions.CredentialsProvider = GetCredentialsProvider(credentialsProvider);
@@ -68,15 +69,96 @@ public class SyncDirectory
         if (repo == null)
             throw new InvalidOperationException("Failed to clone repository.");
 
-        return new SyncDirectory(path, signature, credentialsProvider);
+        return new SyncDirectory(path, signature, credentialsProvider, usePasswordSecureStorage);
     }
 
-    private SyncDirectory(string path, Signature signature, UserProvidedCredentialsHandler credentialsProvider)
+    private SyncDirectory(string path, Signature signature, UserProvidedCredentialsHandler credentialsProvider, bool usePasswordSecureStorage)
     {
         Path = path;
         _repo = new Repository(path);
         _signature = signature;
         _credentialsHandler = credentialsProvider;
+        UsePasswordSecureStorage = usePasswordSecureStorage;
+    }
+
+    private void SaveCredentials(string url, UsernamePasswordCredentials credentials, Action<string> logHandler)
+    {
+        logHandler($"[Info] Saving password for {url} in secure storage.");
+        SecureStorage.SavePassword(credentials, url);
+    }
+
+    private void ClearCredentials(string url)
+    {
+        if (!SecureStorage.PasswordExists(url))
+            return;
+
+        var ret = SecureStorage.ClearPassword(url);
+        if (!ret)
+            throw new InvalidOperationException($"Failed to clear password for {url}.");
+    }
+
+    private T TryWithAuth<T>(Func<T> tryCommand, Action<string> errorHandler)
+    {
+        T ret;
+        try
+        {
+            ret = tryCommand();
+        }
+        catch (LibGit2SharpException e)
+        {
+            if (!UsePasswordSecureStorage || !e.Message.Contains("authentication"))
+            {
+                errorHandler("[ERROR] Authentication error.");
+                throw;
+            }
+
+            if (string.IsNullOrEmpty(_lastUrl))
+            {
+                errorHandler("[ERORR] Unknown authentication error");
+                throw;
+            }
+
+            errorHandler("[ERROR] Authentication error. Clearing credentials and trying again.");
+            ClearCredentials(_lastUrl);
+            return TryWithAuth(tryCommand, errorHandler);
+        }
+
+        if (UsePasswordSecureStorage && _lastCredentials != null)
+            SaveCredentials(_lastUrl, _lastCredentials, errorHandler);
+
+        return ret;
+    }
+
+    private void TryWithAuth(Action tryCommand, Action<string> logHandler)
+    {
+        var actionProxy = () =>
+        {
+            tryCommand();
+            return true;
+        };
+
+        TryWithAuth<bool>(actionProxy, logHandler);
+    }
+
+    private string _lastUrl = "";
+    private UsernamePasswordCredentials? _lastCredentials;
+    private CredentialsHandler GetCredentialsInternal()
+    {
+        var creds = GetCredentialsProvider((url) =>
+        {
+            _lastUrl = url;
+            if (UsePasswordSecureStorage && SecureStorage.TryGetPassword(url, out var c))
+            {
+                _lastCredentials = c!;
+            }
+            else
+            {
+                _lastCredentials = _credentialsHandler.Invoke(url);
+            }
+
+            return _lastCredentials;
+        });
+        return creds;
     }
 
     public void AddRemote(string url)
@@ -84,7 +166,7 @@ public class SyncDirectory
         _repo.Network.Remotes.Add("origin", url);
     }
 
-    public void CommitAndPush(bool force, PushTransferProgressHandler? pushHandler = null, PackBuilderProgressHandler? packHandler = null, Action<string>? errorHandler = null, Action<string>? logHandler = null)
+    public void CommitAndPush(bool force, PushTransferProgressHandler pushHandler, PackBuilderProgressHandler packHandler, Action<string> errorHandler, Action<string> logHandler)
     {
         var remote = _repo.Network.Remotes["origin"];
         if (remote == null)
@@ -101,36 +183,35 @@ public class SyncDirectory
             }
             catch (Exception e)
             {
-                errorHandler?.Invoke("ERROR: Failed to commit - " + e.Message);
-                if(!force)
+                errorHandler.Invoke("[Commit] Failed to commit - " + e.Message);
+                if (!force)
                     return;
             }
         }
         else
         {
-            logHandler?.Invoke("Nothing to commit, working tree clean");
-            if(!force)
+            logHandler.Invoke("[Commit] Nothing to commit, working tree clean");
+            if (!force)
                 return;
         }
 
-        _repo.Network.Push(
-            remote, 
-            _repo.Head.CanonicalName, 
-            new PushOptions() { 
-                CredentialsProvider = GetCredentialsProvider(_credentialsHandler), 
-                OnPushStatusError = (e) => errorHandler?.Invoke(e.Message),
+        TryWithAuth(() => _repo.Network.Push(
+            remote,
+            _repo.Head.CanonicalName,
+            new PushOptions()
+            {
+                CredentialsProvider = GetCredentialsInternal(),
+                OnPushStatusError = (e) => errorHandler.Invoke(e.Message),
                 OnPushTransferProgress = pushHandler,
                 OnPackBuilderProgress = packHandler,
             }
-        );
-
-
+        ), errorHandler);
     }
 
     public void CommitAndPush(bool force, Action<string> logAction, bool addAll = true)
     {
-        if(addAll)
-            AddAll();
+        if (addAll)
+            AddAll(logAction);
 
         var pushHandler = new PushTransferProgressHandler((current, total, bytes) =>
         {
@@ -144,16 +225,16 @@ public class SyncDirectory
             return true;
         });
 
-        var errorHandler = new Action<string>((e) => logAction("[Push ERROR] " + e));
+        var errorHandler = new Action<string>((e) => logAction("[Push/ERROR] " + e));
         var logHandler = new Action<string>((s) => logAction("[Push] " + s));
 
         CommitAndPush(force, pushHandler, packHandler, errorHandler, logHandler);
     }
 
-    public string StatusString(bool addAll = true)
+    public string StatusString(Action<string> logHandler, bool addAll = true)
     {
-        if(addAll)
-            AddAll();
+        if (addAll)
+            AddAll(logHandler);
 
         var status = _repo.RetrieveStatus();
         var ret = "On branch " + _repo.Head.FriendlyName + "\n\n";
@@ -175,8 +256,9 @@ public class SyncDirectory
 
     }
 
-    public void AddAll()
+    public void AddAll(Action<string>? logAction)
     {
+        logAction?.Invoke("[AddAll] Adding files. (This could take a long time!)");
         Commands.Unstage(_repo, "*");
         Commands.Stage(_repo, "*");
     }
@@ -186,27 +268,16 @@ public class SyncDirectory
         Commands.Stage(_repo, path);
     }
 
-    public void Test()
-    {
-        using var _repo = new Repository(Path);
-
-        Commands.Unstage(_repo, "*");
-        Commands.Stage(_repo, "*");
-        var status = _repo.RetrieveStatus();
-        Console.WriteLine(_repo);
-        Console.WriteLine(StatusString());
-    }
-
     public void Pull(Action<string> logHandler, bool addAll = true)
     {
-        if(addAll)
-            AddAll();
+        if (addAll)
+            AddAll(logHandler);
 
         var options = new PullOptions
         {
             FetchOptions = new FetchOptions
             {
-                CredentialsProvider = GetCredentialsProvider(_credentialsHandler),
+                CredentialsProvider = GetCredentialsInternal(),
                 OnProgress = (s) =>
                 {
                     logHandler("[Fetch]: " + s);
@@ -225,7 +296,8 @@ public class SyncDirectory
             }
         };
 
-        var result = Commands.Pull(_repo, _signature, options);
+        MergeResult result = TryWithAuth(() => Commands.Pull(_repo, _signature, options), logHandler);
+
         if (result.Status == MergeStatus.Conflicts)
         {
             logHandler("[Pull] Conflicts detected, please resolve them.");

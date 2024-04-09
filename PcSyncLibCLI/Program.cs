@@ -9,13 +9,15 @@ namespace PcSyncLibCLI;
 
 [SupportedOSPlatform("Linux")]
 static class Program
-{       
+{
+    const bool USE_PASSWORD_SECURE_STORAGE = true;
 
     private static string GetPasswordFromUser()
     {
         Console.Write("Password: ");
 
-        try {
+        try
+        {
             var pass = string.Empty;
             ConsoleKey key;
             do
@@ -38,7 +40,8 @@ static class Program
             Console.WriteLine();
             return pass;
         }
-        catch(InvalidOperationException) {
+        catch (InvalidOperationException)
+        {
             Console.WriteLine("[Warning] Could not mask password. Using plain text method.");
             Console.Write("Password: ");
             return Console.ReadLine() ?? throw new Exception("Password not entered.");
@@ -46,12 +49,8 @@ static class Program
 
     }
 
-    // TODO: Add saving credentials using libsecret.
-    private static UsernamePasswordCredentials AskForCredentials(string url, SupportedCredentialTypes types)
+    private static UsernamePasswordCredentials AskForCredentials(string url)
     {
-        if(SecureStorage.TryGetPassword(url, out var secureCreds))
-            return secureCreds!;
-
         Console.WriteLine("\n=================  Auth  ===================");
         Console.WriteLine("Authentication required for " + url);
         Console.Write("Username: ");
@@ -65,19 +64,10 @@ static class Program
             Password = password
         };
 
-        if(SecureStorage.TrySavePassword(creds, url))
-        {
-            Console.WriteLine("[Info] Credentials saved using SecureStorage.");    
-        }
-        else 
-        {
-            Console.WriteLine("[Warning] Failed to save credentials using SecureStorage.");
-        }
-
         return creds;
     }
 
-    static void PrintHelpEntry(string header, string description) 
+    static void PrintHelpEntry(string header, string description)
     {
         Console.WriteLine($"\t- {header}");
         description = description.Replace("\n", "\n\t\t");
@@ -110,28 +100,33 @@ static class Program
         var signature = new Signature(machineName, "pcsynccli@mtomecki.pl", DateTimeOffset.Now);
         string path = Directory.GetCurrentDirectory();
         var command = args[1];
-        if(command == "clone" ) {
-            if(args.Length < 3) {
+        if (command == "clone")
+        {
+            if (args.Length < 3)
+            {
                 Console.WriteLine("Usage: pcsync clone <url> [path]");
                 return;
             }
-            
+
             var url = args[2];
-            if(!url.EndsWith(".git")) {
+            if (!url.EndsWith(".git"))
+            {
                 Console.WriteLine("[Error] Only HTTP/HTTPS protocol is supported. URL must end with .git");
                 return;
             }
-            
-            if(args.Length > 3) {
+
+            if (args.Length > 3)
+            {
                 path = args[3];
             }
-            else {
+            else
+            {
                 // Try to guess directory name
                 var splitted = url.Split('/');
                 path = splitted.Last();
                 path = path.Substring(0, path.Length - ".git".Length);
 
-                if(string.IsNullOrEmpty(path))
+                if (string.IsNullOrEmpty(path))
                 {
                     Console.WriteLine("[Error] Could not guess directory name. Please provide one.");
                     return;
@@ -141,27 +136,33 @@ static class Program
 
             Console.WriteLine($"[Info] Using directory \"{path}\"");
 
-            if(Directory.Exists(path) && Directory.EnumerateFileSystemEntries(path).Any()) {
+            if (Directory.Exists(path) && Directory.EnumerateFileSystemEntries(path).Any())
+            {
                 Console.WriteLine("[Error] Directory already exists and is not empty.");
                 return;
             }
-            else {
+            else
+            {
                 Directory.CreateDirectory(path);
             }
 
-            var clonedRepo = SyncDirectory.Clone(url, path, signature, AskForCredentials, (s, _, _) => Console.WriteLine("[Checkout] " + s));
+            var clonedRepo = SyncDirectory.Clone(url, path, signature, AskForCredentials, USE_PASSWORD_SECURE_STORAGE, (s, _, _) => Console.WriteLine("[Checkout] " + s));
             Console.WriteLine("[Info] Repository cloned to " + clonedRepo.Path);
             return;
         }
 
         bool force = false;
-        if(args.Length > 2) {
-            if(args[2] == "--force") {
+        if (args.Length > 2)
+        {
+            if (args[2] == "--force")
+            {
                 force = true;
             }
-            else {
+            else
+            {
                 path = args[2];
-                if(args.Length > 3 && args[3] == "--force") {
+                if (args.Length > 3 && args[3] == "--force")
+                {
                     force = true;
                 }
             }
@@ -172,7 +173,7 @@ static class Program
         SyncDirectory repo;
         try
         {
-            repo = SyncDirectory.Open(path, signature, AskForCredentials);
+            repo = SyncDirectory.Open(path, signature, AskForCredentials, USE_PASSWORD_SECURE_STORAGE);
         }
         catch (ArgumentException e)
         {
@@ -180,11 +181,12 @@ static class Program
             return;
         }
 
-        switch(command)
+        switch (command)
         {
             case "status":
                 Console.WriteLine("[Info] Generating repo status...\n");
-                Console.WriteLine("Status:\n" + repo.StatusString());
+                var statusStr = repo.StatusString(Console.WriteLine);
+                Console.WriteLine("Status:\n" + statusStr);
                 return;
 
             case "push":
