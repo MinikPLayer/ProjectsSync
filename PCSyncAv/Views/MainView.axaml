@@ -9,11 +9,6 @@
              x:DataType="vm:MainViewModel"
              Background="#303030"
              >
-  <Design.DataContext>
-    <!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-    <vm:MainViewModel />
-  </Design.DataContext>
 
     <Grid>
         <i:Icon IsVisible="{Binding IsBusy, Mode=OneWay}" Value="fa-spinner" Animation="Spin" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="15"/>

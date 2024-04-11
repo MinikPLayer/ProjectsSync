@@ -15,8 +15,26 @@ namespace PCSyncAv.ViewModels;
 public class MainViewModel : ViewModelBase
 {
     private SyncDirectory? _syncDirectory;
+    public SyncDirectory SyncDirectory
+    {
+        get
+        {
+            if (_syncDirectory == null)
+                throw new Exception("Sync directory not set.");
+
+            if (_username == null)
+                throw new Exception("Username not set.");
+
+            if (_password == null)
+                throw new Exception("Password not set.");
+
+            return _syncDirectory;
+        }
+        set => _syncDirectory = value;
+    }
+
     private string? _username = null;
-    private SecureString? _password = null;
+    private string? _password = null;
 
     private UsernamePasswordCredentials GetCredentials(string url)
     {
@@ -25,7 +43,7 @@ public class MainViewModel : ViewModelBase
             throw new Exception("Credentials not set.");
         }
 
-        return new UsernamePasswordCredentials() { Username = _username, Password = _password.ToString() };
+        return new UsernamePasswordCredentials() { Username = _username, Password = _password };
     }
 
     private bool _isBusy = false;
@@ -41,7 +59,7 @@ public class MainViewModel : ViewModelBase
         IsBusy = true;
         await Task.Run(() =>
         {
-
+            SyncDirectory.Pull(Console.WriteLine);
         });
         IsBusy = false;
     }
@@ -53,15 +71,17 @@ public class MainViewModel : ViewModelBase
         IsBusy = false;
     }
 
-    public MainViewModel() { }
-
-    public MainViewModel(string directory, string username, string email, SecureString password)
+    public void Set(string directory, string email)
     {
-        this._username = username;
-        this._password = password;
-
-        var identity = new Identity(username, email);
+        var identity = new Identity("PcSync2Av", email);
         var signature = new Signature(identity, DateTime.Now);
         _syncDirectory = SyncDirectory.Open(directory, signature, GetCredentials, true);
+    }
+
+    public MainViewModel() { }
+
+    public MainViewModel(string directory, string email)
+    {
+        this.Set(directory, email);
     }
 }

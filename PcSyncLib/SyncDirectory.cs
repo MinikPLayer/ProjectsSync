@@ -59,11 +59,14 @@ public class SyncDirectory
         return new SyncDirectory(path, signature, credentialsProvider, usePasswordSecureStorage);
     }
 
-    public static SyncDirectory Clone(string url, string path, Signature signature, UserProvidedCredentialsHandler credentialsProvider, bool usePasswordSecureStorage, CheckoutProgressHandler? checkoutProgressHandler = null)
+    public static SyncDirectory Clone(string url, string path, Signature signature, UserProvidedCredentialsHandler credentialsProvider, bool usePasswordSecureStorage, Action<string> logHandler)
     {
         var cloneOptions = new CloneOptions();
         cloneOptions.FetchOptions.CredentialsProvider = GetCredentialsProvider(credentialsProvider);
-        cloneOptions.OnCheckoutProgress = checkoutProgressHandler;
+        cloneOptions.OnCheckoutProgress = (path, completedSteps, totalSteps) =>
+        {
+            logHandler($"[Clone] Checkout: {path} {completedSteps}/{totalSteps}");
+        };
 
         var repo = Repository.Clone(url, path, cloneOptions);
         if (repo == null)
@@ -205,7 +208,7 @@ public class SyncDirectory
                 OnPushTransferProgress = pushHandler,
                 OnPackBuilderProgress = packHandler,
             }
-        ), errorHandler);
+        ), logHandler);
     }
 
     public void CommitAndPush(bool force, Action<string> logAction, bool addAll = true)
@@ -283,9 +286,9 @@ public class SyncDirectory
                     logHandler("[Fetch]: " + s);
                     return true;
                 },
-                OnTransferProgress = (current) =>
+                OnTransferProgress = (progress) =>
                 {
-                    logHandler($"[Fetch]: {current}");
+                    logHandler($"[Fetch]: {progress.ReceivedObjects}/{progress.TotalObjects} ({progress.ReceivedBytes} bytes)");
                     return true;
                 },
                 OnUpdateTips = (refName, oldId, newId) =>

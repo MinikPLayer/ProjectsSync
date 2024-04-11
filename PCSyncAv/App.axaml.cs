@@ -9,11 +9,15 @@ using HotAvalonia;
 using System;
 using System.Diagnostics;
 using Avalonia.Controls;
+using System.Runtime.Versioning;
 
 namespace PCSyncAv;
 
+[SupportedOSPlatform("Linux")]
 public partial class App : Application
 {
+    public AppConfig CurrentConfig;
+
     public override void Initialize()
     {
         this.EnableHotReload();
@@ -22,6 +26,8 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        CurrentConfig = AppConfig.Load();
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             Console.WriteLine("Launching in desktop mode");

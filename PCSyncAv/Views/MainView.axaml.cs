@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Runtime.Versioning;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using PCSyncAv.ViewModels;
 
 namespace PCSyncAv.Views;
 
+[SupportedOSPlatform("Linux")]
 public partial class MainView : UserControl
 {
     private MainViewModel ViewModel => (MainViewModel?)DataContext ?? throw new InvalidOperationException();
