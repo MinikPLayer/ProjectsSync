@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PRSyncAv", "PRSyncAv.csproj", "{5EB271A6-1605-4ACD-A3AA-5F25722D7128}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectsSyncAv", "ProjectsSyncAv.csproj", "{5EB271A6-1605-4ACD-A3AA-5F25722D7128}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PRSyncAv.Desktop", "..\PRSyncAv.Desktop\PRSyncAv.Desktop.csproj", "{D71FF528-1E86-4438-A9E9-16152507E42A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectsSyncAv.Desktop", "..\ProjectsSyncAv.Desktop\ProjectsSyncAv.Desktop.csproj", "{D71FF528-1E86-4438-A9E9-16152507E42A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectsSyncLib", "..\ProjectsSyncLib\ProjectsSyncLib.csproj", "{EE585AC0-8C67-4354-A459-81325FBFA410}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRSyncLibTests", "..\PRSyncLibTests\PRSyncLibTests.csproj", "{7BE7B452-FA63-4081-8ECF-C3A2EFC56D50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectsSyncLibTests", "..\ProjectsSyncLibTests\ProjectsSyncLibTests.csproj", "{7BE7B452-FA63-4081-8ECF-C3A2EFC56D50}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectsSyncLibCLI", "..\ProjectsSyncLibCLI\ProjectsSyncLibCLI.csproj", "{E4A47C86-ADE8-4BE8-A152-3616EEB3430A}"
 EndProject

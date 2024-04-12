@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PRSyncAv\PRSyncAv.csproj" />
+    <ProjectReference Include="..\ProjectsSyncAv\ProjectsSyncAv.csproj" />
   </ItemGroup>
 
   <ItemGroup>
