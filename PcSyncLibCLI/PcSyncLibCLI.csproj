@@ -13,4 +13,10 @@
     <FileVersion>v1.0-beta3</FileVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="Scripts\install.sh" Link="install.sh">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
