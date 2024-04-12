@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using LibGit2Sharp;
-using PcSyncLib;
+using ProjectsSyncLib;
 
-namespace PCSyncLibTests;
+namespace PRSyncLibTests;
 
 [TestFixture]
 public class SyncDirectoryTests
@@ -12,12 +12,12 @@ public class SyncDirectoryTests
     [SetUp]
     public void Setup()
     {
-        if(Directory.Exists(_tempPath))
+        if (Directory.Exists(_tempPath))
             Directory.Delete(_tempPath, true);
 
         SyncDirectory.Create(_tempPath);
         Assert.That(Directory.Exists(_tempPath));
-        Assert.That(Directory.Exists(Path.Combine(_tempPath, ".pcsync")));
+        Assert.That(Directory.Exists(Path.Combine(_tempPath, ".prsync")));
     }
 
     [Test]

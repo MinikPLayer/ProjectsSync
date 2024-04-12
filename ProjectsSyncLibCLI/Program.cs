@@ -3,9 +3,9 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using LibGit2Sharp;
-using PcSyncLib;
+using ProjectsSyncLib;
 
-namespace PcSyncLibCLI;
+namespace ProjectsSyncLibCLI;
 
 [SupportedOSPlatform("Linux")]
 static class Program
@@ -20,7 +20,7 @@ static class Program
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            string version = fvi.FileVersion ?? "dev-unknown";
+            string version = fvi.FileVersion ?? "dev";
             AppVersionString = version;
         }
     }
@@ -90,14 +90,14 @@ static class Program
 
     static void PrintHelp()
     {
-        Console.WriteLine("PCSync CLI interface.");
+        Console.WriteLine("ProjectsSync CLI interface.");
         Console.WriteLine("");
 
-        PrintHelpEntry("pcsync help", "Displays this help message.");
-        PrintHelpEntry("pcsync clone <url> [path]", "Clonse repository under <url> to the specified [path]. \nIf path is not specified a new directory is created with a name guessed from the <url>.");
-        PrintHelpEntry("pcsync pull [path]", "Pulls changes to repository under [path]. \nIf [path] is not specified current directory is used.");
-        PrintHelpEntry("pcsync push [path] [--force]", "Pushes changes to repository under [path]. \nIf [path] is not specified current directory is used.");
-        PrintHelpEntry("pcsync status [path]", "Displays status for repository under [path]. \nIf [path] is not specified current directory is used.");
+        PrintHelpEntry("prsync help", "Displays this help message.");
+        PrintHelpEntry("prsync clone <url> [path]", "Clonse repository under <url> to the specified [path]. \nIf path is not specified a new directory is created with a name guessed from the <url>.");
+        PrintHelpEntry("prsync pull [path]", "Pulls changes to repository under [path]. \nIf [path] is not specified current directory is used.");
+        PrintHelpEntry("prsync push [path] [--force]", "Pushes changes to repository under [path]. \nIf [path] is not specified current directory is used.");
+        PrintHelpEntry("prsync status [path]", "Displays status for repository under [path]. \nIf [path] is not specified current directory is used.");
     }
 
     static void Main()
@@ -110,7 +110,7 @@ static class Program
         }
 
         var machineName = Environment.MachineName;
-        var signature = new Signature(machineName, "pcsynccli@mtomecki.pl", DateTimeOffset.Now);
+        var signature = new Signature(machineName, "prsynccli@mtomecki.pl", DateTimeOffset.Now);
         string path = Directory.GetCurrentDirectory();
         var command = args[1];
         if (command == "version" || command == "--version")
@@ -122,7 +122,7 @@ static class Program
         {
             if (args.Length < 3)
             {
-                Console.WriteLine("Usage: pcsync clone <url> [path]");
+                Console.WriteLine("Usage: prsync clone <url> [path]");
                 return;
             }
 

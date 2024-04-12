@@ -1,8 +1,0 @@
-{
-    "profiles": {
-      "PcSyncLibCLI": {
-        "commandName": "Project",
-        "commandLineArgs": "version",
-      }
-    }
-  }

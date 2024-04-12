@@ -1,6 +1,6 @@
 ﻿using ReactiveUI;
 
-namespace PCSyncAv.ViewModels;
+namespace PRSyncAv.ViewModels;
 
 public class ViewModelBase : ReactiveObject
 {

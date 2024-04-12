@@ -2,9 +2,9 @@
 using System.Runtime.Versioning;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using PCSyncAv.ViewModels;
+using PRSyncAv.ViewModels;
 
-namespace PCSyncAv.Views;
+namespace PRSyncAv.Views;
 
 [SupportedOSPlatform("Linux")]
 public partial class MainView : UserControl

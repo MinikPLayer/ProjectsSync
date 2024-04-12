@@ -31,6 +31,8 @@ function build_and_pack() {
 	echo "Building $PROJECT..."
 	cd $SCRIPT_DIR/$PROJECT_DIR
 	dotnet clean
+	rm -rf ./bin
+	rm -rf ./obj
 	dotnet build -c Release /p:FileVersion="$VERSION"
 	cd bin/Release/$DOTNET_VERSION/
 	if [ $REMOVE_RUNTIMES = 1 ]; then
@@ -52,6 +54,6 @@ function build_and_pack() {
 	cp $ZIP_FILE_NAME $BUILD_OUTPUT_DIR/
 }
 
-build_and_pack "PcSyncLib" "pcsync-lib" "net7.0"
-build_and_pack "PcSyncLibCLI" "pcsync-cli" "net8.0" 1
+build_and_pack "ProjectsSyncLib" "prsync-lib" "net7.0"
+build_and_pack "ProjectsSyncLibCLI" "prsync-cli" "net8.0" 1
 

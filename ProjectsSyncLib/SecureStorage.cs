@@ -6,7 +6,7 @@ using CM = Simple.CredentialManager;
 [SupportedOSPlatform("Linux")]
 public static class SecureStorage
 {
-    const string COLLECTION_NAME = "pcsync2";
+    const string COLLECTION_NAME = "prsync";
 
     public static bool TrySavePassword(UsernamePasswordCredentials userCredentials, string url)
     {
@@ -24,7 +24,7 @@ public static class SecureStorage
     public static void SavePassword(UsernamePasswordCredentials userCredentials, string url)
     {
         var credsJson = JsonSerializer.Serialize(userCredentials);
-        var creds = new CM.LinuxCredential(url, credsJson, $"PCSync2 credentials for \"{url}\"", collection: COLLECTION_NAME);
+        var creds = new CM.LinuxCredential(url, credsJson, $"PRSync credentials for \"{url}\"", collection: COLLECTION_NAME);
         var result = creds.Save();
         if (!result)
             throw new Exception("Failed to save credentials.");

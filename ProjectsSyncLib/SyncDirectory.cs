@@ -3,7 +3,7 @@ using System.Runtime.Versioning;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
 
-namespace PcSyncLib;
+namespace ProjectsSyncLib;
 
 [SupportedOSPlatform("Linux")]
 public class SyncDirectory

@@ -5,11 +5,11 @@ using System.Security;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using LibGit2Sharp;
-using PCSyncAv.Views;
-using PcSyncLib;
+using PRSyncAv.Views;
+using ProjectsSyncLib;
 using ReactiveUI;
 
-namespace PCSyncAv.ViewModels;
+namespace PRSyncAv.ViewModels;
 
 [SupportedOSPlatform("Linux")]
 public class MainViewModel : ViewModelBase
@@ -73,7 +73,7 @@ public class MainViewModel : ViewModelBase
 
     public void Set(string directory, string email)
     {
-        var identity = new Identity("PcSync2Av", email);
+        var identity = new Identity("ProjectsSync2Av", email);
         var signature = new Signature(identity, DateTime.Now);
         _syncDirectory = SyncDirectory.Open(directory, signature, GetCredentials, true);
     }

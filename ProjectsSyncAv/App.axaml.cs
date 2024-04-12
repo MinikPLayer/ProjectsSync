@@ -2,8 +2,8 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-using PCSyncAv.ViewModels;
-using PCSyncAv.Views;
+using PRSyncAv.ViewModels;
+using PRSyncAv.Views;
 
 using HotAvalonia;
 using System;
@@ -11,7 +11,7 @@ using System.Diagnostics;
 using Avalonia.Controls;
 using System.Runtime.Versioning;
 
-namespace PCSyncAv;
+namespace PRSyncAv;
 
 [SupportedOSPlatform("Linux")]
 public partial class App : Application

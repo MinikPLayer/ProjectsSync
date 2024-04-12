@@ -5,7 +5,7 @@ using Avalonia.ReactiveUI;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
 
-namespace PCSyncAv.Desktop;
+namespace PRSyncAv.Desktop;
 
 class Program
 {

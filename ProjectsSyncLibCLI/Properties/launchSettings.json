@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ProjectsSyncLibCLI": {
+      "commandName": "Project",
+      "commandLineArgs": "version"
+    }
+  }
+}

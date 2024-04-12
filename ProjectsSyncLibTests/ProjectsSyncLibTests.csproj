@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\PcSyncLib\PcSyncLib.csproj" />
+      <ProjectReference Include="..\ProjectsSyncLib\ProjectsSyncLib.csproj" />
     </ItemGroup>
 
 </Project>

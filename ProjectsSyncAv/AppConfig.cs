@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 public struct AppConfig
 {
     public static string DefaultPath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "pcsync2av");
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "prsync");
 
     public string RepoPath { get; set; }
     public string EmailAddress { get; set; }

@@ -1,7 +1,7 @@
 ﻿using System;
 using Avalonia.Controls;
 
-namespace PCSyncAv.Views;
+namespace PRSyncAv.Views;
 
 public partial class MainWindow : Window
 {

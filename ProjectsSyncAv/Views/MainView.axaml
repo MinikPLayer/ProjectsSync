@@ -2,10 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:PCSyncAv.ViewModels"
+             xmlns:vm="clr-namespace:PRSyncAv.ViewModels"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="450"
-             x:Class="PCSyncAv.Views.MainView"
+             x:Class="PRSyncAv.Views.MainView"
              x:DataType="vm:MainViewModel"
              Background="#303030"
              >
