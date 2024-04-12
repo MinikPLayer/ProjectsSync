@@ -10,7 +10,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>pcsync</AssemblyName>
-    <FileVersion>Unspecified</FileVersion>
+    <FileVersion>dev</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
