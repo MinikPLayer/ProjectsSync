@@ -164,7 +164,19 @@ static class Program
                 Directory.CreateDirectory(path);
             }
 
-            var clonedRepo = SyncDirectory.Clone(url, path, signature, AskForCredentials, USE_PASSWORD_SECURE_STORAGE, (s) => Console.WriteLine("[Checkout] " + s));
+            var clonedRepo = SyncDirectory.Clone(
+                url,
+                path,
+                signature,
+                (url) =>
+                {
+                    var creds = AskForCredentials(url);
+                    Console.WriteLine("Trying to clone... (This could take a long time!)");
+                    return creds;
+                },
+                USE_PASSWORD_SECURE_STORAGE,
+                (s) => Console.WriteLine("[Checkout] " + s)
+            );
             Console.WriteLine("[Info] Repository cloned to " + clonedRepo.Path);
             return;
         }
