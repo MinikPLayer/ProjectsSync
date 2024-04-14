@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectsSyncLibTests", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectsSyncLibCLI", "..\ProjectsSyncLibCLI\ProjectsSyncLibCLI.csproj", "{E4A47C86-ADE8-4BE8-A152-3616EEB3430A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.CredentialManager", "..\..\..\temp\Simple.CredentialsManager\src\Simple.CredentialManager\Simple.CredentialManager.csproj", "{937762F8-FAAE-4D81-B9BA-D20DAB4AB68E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.CredentialManager", "..\Simple.CredentialsManager\src\Simple.CredentialManager\Simple.CredentialManager.csproj", "{937762F8-FAAE-4D81-B9BA-D20DAB4AB68E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
