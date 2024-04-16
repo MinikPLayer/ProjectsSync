@@ -34,8 +34,8 @@ public class SyncDirectory
             throw new InvalidOperationException("Could not get assembly directory.");
         }
 
-        var libDir = System.IO.Path.Combine(assemblyDir, "lib");
-        LibGit2Sharp.GlobalSettings.NativeLibraryPath = libDir;
+        //var libDir = System.IO.Path.Combine(assemblyDir, "lib");
+        //LibGit2Sharp.GlobalSettings.NativeLibraryPath = libDir;
     }
 
     public static SyncDirectory Create(string path, Signature signature, UserProvidedCredentialsHandler credentialsProvider, bool usePasswordSecureStorage)

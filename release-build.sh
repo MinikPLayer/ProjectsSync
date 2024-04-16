@@ -26,7 +26,6 @@ function build_and_pack() {
 	PROJECT_DIR=$1
 	PROJECT_NAME=$2
 	DOTNET_VERSION=$3
-	REMOVE_RUNTIMES=$4
 
 	echo "Building $PROJECT..."
 	cd $SCRIPT_DIR/$PROJECT_DIR
@@ -35,10 +34,6 @@ function build_and_pack() {
 	rm -rf ./obj
 	dotnet build -c Release /p:FileVersion="$VERSION"
 	cd bin/Release/$DOTNET_VERSION/
-	if [ $REMOVE_RUNTIMES = 1 ]; then
-		echo "Removing runtimes directory..."
-		rm -r ./runtimes
-	fi
 
 	if [ -e $VERSION_FILE_NAME ]; then
 		rm $VERSION_FILE_NAME

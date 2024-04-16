@@ -7,15 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Update="lib\libgit2.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="lib\libgit2.so">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\libgit2sharp-PrSync\LibGit2Sharp\LibGit2Sharp.csproj" />
       <ProjectReference Include="..\Simple.CredentialsManager\src\Simple.CredentialManager\Simple.CredentialManager.csproj" />
     </ItemGroup>
