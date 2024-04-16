@@ -87,9 +87,6 @@ public class SyncDirectory
     // TODO: Add Windows support
     private void ClearCredentials(string url)
     {
-        if (!OperatingSystem.IsLinux())
-            return;
-
         if (!SecureStorage.PasswordExists(url))
             return;
 

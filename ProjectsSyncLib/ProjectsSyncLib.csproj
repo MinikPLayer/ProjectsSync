@@ -11,7 +11,7 @@
       <ProjectReference Include="..\Simple.CredentialsManager\src\Simple.CredentialManager\Simple.CredentialManager.csproj" />
     </ItemGroup>
 
-    <!--<ItemGroup>
+    <ItemGroup>
       <None Update="runtimes\linux-arm64\native\libgit2.so">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
@@ -30,7 +30,7 @@
       <None Update="runtimes\win-x86\native\libgit2.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-    </ItemGroup>-->
+    </ItemGroup>
 
     <PropertyGroup>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

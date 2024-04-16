@@ -1,12 +1,31 @@
 using System.Runtime.Versioning;
 using System.Text.Json;
 using LibGit2Sharp;
+using Simple.CredentialManager;
 using CM = Simple.CredentialManager;
 
 [SupportedOSPlatform("Linux")]
+[SupportedOSPlatform("Windows")]
 public static class SecureStorage
 {
     const string COLLECTION_NAME = "prsync";
+
+    static ICredential GetCredential(string url, string credsJson)
+    {
+        string tag = $"PRSync credentials for \"{url}\"";
+        if(OperatingSystem.IsLinux())
+        {
+            return new CM.LinuxCredential(url, credsJson, tag, collection: COLLECTION_NAME);
+        }
+        else if(OperatingSystem.IsWindows())
+        {
+            return new CM.WinCredential(url, credsJson, tag, CredentialType.Generic);
+        }
+        else
+        {
+            throw new PlatformNotSupportedException("This platform is not supported.");
+        }
+    }
 
     public static bool TrySavePassword(UsernamePasswordCredentials userCredentials, string url)
     {
@@ -24,7 +43,7 @@ public static class SecureStorage
     public static void SavePassword(UsernamePasswordCredentials userCredentials, string url)
     {
         var credsJson = JsonSerializer.Serialize(userCredentials);
-        var creds = new CM.LinuxCredential(url, credsJson, $"PRSync credentials for \"{url}\"", collection: COLLECTION_NAME);
+        var creds = GetCredential(url, credsJson);
         var result = creds.Save();
         if (!result)
             throw new Exception("Failed to save credentials.");
@@ -47,7 +66,7 @@ public static class SecureStorage
 
     public static UsernamePasswordCredentials GetPassword(string url)
     {
-        var creds = new CM.LinuxCredential(url, "", "", collection: COLLECTION_NAME);
+        var creds = GetCredential(url, "");
         var result = creds.Load();
         if (!result)
             throw new Exception("Failed to load credentials.");
@@ -62,13 +81,13 @@ public static class SecureStorage
 
     public static bool PasswordExists(string url)
     {
-        var creds = new CM.LinuxCredential(url, "", "", collection: COLLECTION_NAME);
+        var creds = GetCredential(url, "");
         return creds.Exists();
     }
 
     public static bool ClearPassword(string url)
     {
-        var creds = new CM.LinuxCredential(url, "", "", collection: COLLECTION_NAME);
+        var creds = GetCredential(url, "");
         return creds.Delete();
     }
 }
