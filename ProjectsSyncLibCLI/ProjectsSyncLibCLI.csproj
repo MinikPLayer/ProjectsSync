@@ -11,6 +11,7 @@
     <Nullable>enable</Nullable>
     <AssemblyName>prsync</AssemblyName>
     <FileVersion>dev</FileVersion>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
