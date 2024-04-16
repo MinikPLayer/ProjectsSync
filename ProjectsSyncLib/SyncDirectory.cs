@@ -6,6 +6,7 @@ using LibGit2Sharp.Handlers;
 namespace ProjectsSyncLib;
 
 [SupportedOSPlatform("Linux")]
+[SupportedOSPlatform("Windows")]
 public class SyncDirectory
 {
     public delegate UsernamePasswordCredentials UserProvidedCredentialsHandler(string url);
@@ -20,11 +21,6 @@ public class SyncDirectory
 
     static SyncDirectory()
     {
-        if (!OperatingSystem.IsLinux())
-        {
-            throw new PlatformNotSupportedException("Platform not supported.");
-        }
-
         var assembly = Assembly.GetAssembly(typeof(SyncDirectory));
         if (assembly == null)
         {
@@ -87,11 +83,16 @@ public class SyncDirectory
     private void SaveCredentials(string url, UsernamePasswordCredentials credentials, Action<string> logHandler)
     {
         logHandler($"[Info] Saving password for {url} in secure storage.");
-        SecureStorage.SavePassword(credentials, url);
+        if(OperatingSystem.IsLinux())
+            SecureStorage.SavePassword(credentials, url);
     }
 
+    // TODO: Add Windows support
     private void ClearCredentials(string url)
     {
+        if (!OperatingSystem.IsLinux())
+            return;
+
         if (!SecureStorage.PasswordExists(url))
             return;
 

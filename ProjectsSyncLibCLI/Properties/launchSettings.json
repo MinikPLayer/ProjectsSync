@@ -2,7 +2,7 @@
   "profiles": {
     "ProjectsSyncLibCLI": {
       "commandName": "Project",
-      "commandLineArgs": "version"
+      "commandLineArgs": "clone http://home.mtomecki.pl:3000/minik/test.git D:\\test"
     }
   }
 }

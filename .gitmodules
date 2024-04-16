@@ -1,3 +1,6 @@
 [submodule "Simple.CredentialsManager"]
 	path = Simple.CredentialsManager
 	url = https://github.com/MinikPLayer/Simple.CredentialsManager.git
+[submodule "libgit2sharp-PrSync"]
+	path = libgit2sharp-PrSync
+	url = https://github.com/MinikPLayer/libgit2sharp-PrSync.git

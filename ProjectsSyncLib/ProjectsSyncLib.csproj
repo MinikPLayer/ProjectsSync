@@ -7,20 +7,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="LibGit2Sharp" Version="0.30.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="lib\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Update="lib\git2-a418d9d.so">
+      <None Update="lib\libgit2.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="lib\libgit2.so">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\libgit2sharp-PrSync\LibGit2Sharp\LibGit2Sharp.csproj" />
       <ProjectReference Include="..\Simple.CredentialsManager\src\Simple.CredentialManager\Simple.CredentialManager.csproj" />
     </ItemGroup>
 

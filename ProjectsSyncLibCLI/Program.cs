@@ -12,7 +12,7 @@ static class Program
 {
     static string AppVersionString = "";
 
-    const bool USE_PASSWORD_SECURE_STORAGE = true;
+    static bool USE_PASSWORD_SECURE_STORAGE = OperatingSystem.IsLinux();
 
     static Program()
     {
