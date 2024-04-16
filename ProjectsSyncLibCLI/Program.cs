@@ -8,6 +8,7 @@ using ProjectsSyncLib;
 namespace ProjectsSyncLibCLI;
 
 [SupportedOSPlatform("Linux")]
+[SupportedOSPlatform("Windows")]
 static class Program
 {
     static string AppVersionString = "";
