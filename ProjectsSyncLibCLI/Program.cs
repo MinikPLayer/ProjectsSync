@@ -153,6 +153,7 @@ static class Program
 
             }
 
+            path = Path.GetFullPath(path);
             Console.WriteLine($"[Info] Using directory \"{path}\"");
 
             if (Directory.Exists(path) && Directory.EnumerateFileSystemEntries(path).Any())
@@ -200,9 +201,6 @@ static class Program
         }
 
         Console.WriteLine($"[Info] Using directory \"{path}\"");
-
-        // HACK
-        File.AppendAllText("D:\\test\\test.txt", DateTime.Now.ToString());
 
         SyncDirectory repo;
         try
