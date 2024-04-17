@@ -10,6 +10,11 @@ public static class SecureStorage
 {
     const string COLLECTION_NAME = "prsync";
 
+    public static bool IsSupportedOS()
+    {
+        return OperatingSystem.IsLinux() || OperatingSystem.IsWindows();
+    }
+
     static ICredential GetCredential(string url, string credsJson)
     {
         string tag = $"PRSync credentials for \"{url}\"";

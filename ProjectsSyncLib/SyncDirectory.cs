@@ -79,12 +79,17 @@ public class SyncDirectory
 
     private void SaveCredentials(string url, UsernamePasswordCredentials credentials, Action<string> logHandler)
     {
-        logHandler($"[Info] Saving password for {url} in secure storage.");
-        if(OperatingSystem.IsLinux())
+        if (SecureStorage.IsSupportedOS())
+        {
+            logHandler($"[Info] Saving password for {url} in secure storage.");
             SecureStorage.SavePassword(credentials, url);
+        }
+        else
+        {
+            logHandler($"[Warning] Secure storage not supported on this platform. Password will not be saved.");
+        }
     }
 
-    // TODO: Add Windows support
     private void ClearCredentials(string url)
     {
         if (!SecureStorage.PasswordExists(url))

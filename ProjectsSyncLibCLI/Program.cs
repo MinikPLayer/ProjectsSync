@@ -13,7 +13,7 @@ static class Program
 {
     static string AppVersionString = "";
 
-    static bool USE_PASSWORD_SECURE_STORAGE = OperatingSystem.IsLinux();
+    static bool USE_PASSWORD_SECURE_STORAGE = OperatingSystem.IsLinux() || OperatingSystem.IsWindows();
 
     static Program()
     {
