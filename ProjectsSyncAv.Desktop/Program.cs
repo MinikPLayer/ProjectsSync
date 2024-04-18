@@ -15,7 +15,8 @@ class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        AvaloniaHiDPI.LinuxHiDPI.SetAutoDpiScaling();
+        if(OperatingSystem.IsLinux())
+            AvaloniaHiDPI.LinuxHiDPI.SetAutoDpiScaling();
 
         BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
     }

@@ -28,9 +28,14 @@ public struct AppConfig
         File.WriteAllText(path, ToJson());
     }
 
+    public static AppConfig LoadDefault() => new AppConfig();
+
     public static AppConfig Load()
     {
         var path = DefaultPath;
+
+        if (!File.Exists(path))
+            return LoadDefault();
 
         var jsonContent = File.ReadAllText(path);
         var config = FromJson(jsonContent);
