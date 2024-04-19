@@ -4,3 +4,6 @@
 [submodule "libgit2sharp-PrSync"]
 	path = libgit2sharp-PrSync
 	url = https://github.com/MinikPLayer/libgit2sharp-PrSync.git
+[submodule "HotAvalonia-VisualStudio"]
+	path = HotAvalonia-VisualStudio
+	url = https://github.com/MinikPLayer/HotAvalonia-VisualStudio.git
