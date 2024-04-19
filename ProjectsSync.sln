@@ -3,19 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectsSyncAv", "ProjectsSyncAv.csproj", "{5EB271A6-1605-4ACD-A3AA-5F25722D7128}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectsSyncAv", "ProjectsSyncAv\ProjectsSyncAv.csproj", "{5EB271A6-1605-4ACD-A3AA-5F25722D7128}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectsSyncAv.Desktop", "..\ProjectsSyncAv.Desktop\ProjectsSyncAv.Desktop.csproj", "{D71FF528-1E86-4438-A9E9-16152507E42A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectsSyncAv.Desktop", "ProjectsSyncAv.Desktop\ProjectsSyncAv.Desktop.csproj", "{D71FF528-1E86-4438-A9E9-16152507E42A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectsSyncLib", "..\ProjectsSyncLib\ProjectsSyncLib.csproj", "{EE585AC0-8C67-4354-A459-81325FBFA410}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectsSyncLib", "ProjectsSyncLib\ProjectsSyncLib.csproj", "{EE585AC0-8C67-4354-A459-81325FBFA410}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectsSyncLibTests", "..\ProjectsSyncLibTests\ProjectsSyncLibTests.csproj", "{7BE7B452-FA63-4081-8ECF-C3A2EFC56D50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectsSyncLibCLI", "ProjectsSyncLibCLI\ProjectsSyncLibCLI.csproj", "{E4A47C86-ADE8-4BE8-A152-3616EEB3430A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectsSyncLibCLI", "..\ProjectsSyncLibCLI\ProjectsSyncLibCLI.csproj", "{E4A47C86-ADE8-4BE8-A152-3616EEB3430A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.CredentialManager", "Simple.CredentialsManager\src\Simple.CredentialManager\Simple.CredentialManager.csproj", "{937762F8-FAAE-4D81-B9BA-D20DAB4AB68E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.CredentialManager", "..\Simple.CredentialsManager\src\Simple.CredentialManager\Simple.CredentialManager.csproj", "{937762F8-FAAE-4D81-B9BA-D20DAB4AB68E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibGit2Sharp", "..\libgit2sharp-PrSync\LibGit2Sharp\LibGit2Sharp.csproj", "{3A0F602E-6D2C-4E29-A3D4-8A7781D84E78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibGit2Sharp", "libgit2sharp-PrSync\LibGit2Sharp\LibGit2Sharp.csproj", "{3A0F602E-6D2C-4E29-A3D4-8A7781D84E78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +79,14 @@ Global
 		{3A0F602E-6D2C-4E29-A3D4-8A7781D84E78}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3A0F602E-6D2C-4E29-A3D4-8A7781D84E78}.Release|x64.ActiveCfg = Release|Any CPU
 		{3A0F602E-6D2C-4E29-A3D4-8A7781D84E78}.Release|x64.Build.0 = Release|Any CPU
+		{6BDD9761-1F3D-4ACB-8C89-65F2CC7FF2AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BDD9761-1F3D-4ACB-8C89-65F2CC7FF2AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BDD9761-1F3D-4ACB-8C89-65F2CC7FF2AB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6BDD9761-1F3D-4ACB-8C89-65F2CC7FF2AB}.Debug|x64.Build.0 = Debug|Any CPU
+		{6BDD9761-1F3D-4ACB-8C89-65F2CC7FF2AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BDD9761-1F3D-4ACB-8C89-65F2CC7FF2AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BDD9761-1F3D-4ACB-8C89-65F2CC7FF2AB}.Release|x64.ActiveCfg = Release|Any CPU
+		{6BDD9761-1F3D-4ACB-8C89-65F2CC7FF2AB}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

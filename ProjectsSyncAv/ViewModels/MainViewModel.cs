@@ -12,8 +12,23 @@ using ReactiveUI;
 namespace PRSyncAv.ViewModels;
 
 [SupportedOSPlatform("Linux")]
+[SupportedOSPlatform("Windows")]
 public class MainViewModel : ViewModelBase
 {
+    private bool _isUpToDate = false;
+    public bool IsUpToDate
+    {
+        get => _isUpToDate;
+        set => this.RaiseAndSetIfChanged(ref _isUpToDate, value);
+    }
+
+    private bool _isModified = false;
+    public bool IsModified
+    {
+        get => _isModified;
+        set => this.RaiseAndSetIfChanged(ref _isModified, value);
+    }
+
     private SyncDirectory? _syncDirectory;
     public SyncDirectory SyncDirectory
     {
@@ -67,7 +82,11 @@ public class MainViewModel : ViewModelBase
     public async void Refresh()
     {
         IsBusy = true;
-        await System.Threading.Tasks.Task.Delay(1000);
+        await Task.Run(() =>
+        {
+            IsModified = SyncDirectory.IsModified();
+            IsUpToDate = SyncDirectory.IsUpToDate();
+        });
         IsBusy = false;
     }
 

@@ -7,6 +7,7 @@ using PRSyncAv.ViewModels;
 namespace PRSyncAv.Views;
 
 [SupportedOSPlatform("Linux")]
+[SupportedOSPlatform("Windows")]
 public partial class MainView : UserControl
 {
     private MainViewModel ViewModel => (MainViewModel?)DataContext ?? throw new InvalidOperationException();
@@ -16,7 +17,7 @@ public partial class MainView : UserControl
         InitializeComponent();
     }
 
-    private void PullButton_OnClick(object? sender, RoutedEventArgs e)
+    public void PullButton_OnClick(object? sender, RoutedEventArgs e)
     {
         ViewModel.Refresh();
     }

@@ -14,6 +14,7 @@ using System.Runtime.Versioning;
 namespace PRSyncAv;
 
 [SupportedOSPlatform("Linux")]
+[SupportedOSPlatform("Windows")]
 public partial class App : Application
 {
     public AppConfig CurrentConfig;
@@ -37,11 +38,7 @@ public partial class App : Application
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            Console.WriteLine("Launching in single view mode");
-            singleViewPlatform.MainView = new MainView
-            {
-                DataContext = new MainViewModel()
-            };
+            throw new NotSupportedException("Single View Platforms are not supported right now");
         }
 
         base.OnFrameworkInitializationCompleted();

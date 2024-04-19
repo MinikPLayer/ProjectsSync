@@ -234,6 +234,35 @@ public class SyncDirectory
         CommitAndPush(force, pushHandler, packHandler, errorHandler, logHandler);
     }
 
+    public bool IsModified()
+    {
+        var status = _repo.RetrieveStatus();
+        return status.IsDirty;
+    }
+
+    public bool IsUpToDate()
+    {
+        var remote = _repo.Network.Remotes["origin"];
+        if (remote == null)
+            throw new InvalidOperationException("No remote found.");
+
+        var refSpecs = remote.FetchRefSpecs.Select(x => x.Specification);
+        var refSpec = refSpecs.FirstOrDefault();
+        if (refSpec == null)
+            throw new InvalidOperationException("No refspec found.");
+
+        var refName = refSpec.Split(':')[1];
+        var remoteBranch = _repo.Branches[refName];
+        if (remoteBranch == null)
+            throw new InvalidOperationException("Remote branch not found.");
+
+        var localBranch = _repo.Branches[_repo.Head.FriendlyName];
+        if (localBranch == null)
+            throw new InvalidOperationException("Local branch not found.");
+
+        return localBranch.Tip.Sha == remoteBranch.Tip.Sha;
+    }
+
     public string StatusString(Action<string> logHandler, bool addAll = true)
     {
         if (addAll)
