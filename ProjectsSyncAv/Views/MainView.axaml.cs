@@ -22,7 +22,7 @@ public partial class MainView : UserControl
         ViewModel.Refresh();
     }
 
-    private void RefreshButton_OnClick(object? sender, RoutedEventArgs e)
+    public void RefreshButton_OnClick(object? sender, RoutedEventArgs e)
     {
         ViewModel.Refresh();
     }

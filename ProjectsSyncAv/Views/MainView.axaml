@@ -26,7 +26,7 @@
                 <Button x:Name="RefreshButton" Click="RefreshButton_OnClick">
                     <StackPanel Orientation="Horizontal" Spacing="5">
                         <i:Icon Value="fa-sync"/>
-                        <TextBlock Text="Refresh"/> 
+                        <TextBlock Text="Refresh"/>
                     </StackPanel>
                 </Button>
                 <Button Name="PushButton">
