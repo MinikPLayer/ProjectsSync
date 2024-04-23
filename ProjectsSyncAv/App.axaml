@@ -6,12 +6,18 @@
 
     <Application.Styles>
         <FluentTheme />
+		<Style Selector="TextBlock.input-label">
+			<Style.Setters>
+				<Setter Property="FontSize" Value="16"/>
+			</Style.Setters>
+		</Style>
     </Application.Styles>
 
      <TrayIcon.Icons>
          <TrayIcons>
              <TrayIcon Icon="/Assets/avalonia-logo.ico"
-                       ToolTipText="Avalonia Tray Icon ToolTip">
+                       ToolTipText="Avalonia Tray Icon ToolTip"
+					   Clicked="TrayIcon_Clicked">
                  <TrayIcon.Menu>
                      <NativeMenu>
                          <NativeMenuItem Header="Restore" Click="RestoreWindowMenuItemOnClick"/>

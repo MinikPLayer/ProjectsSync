@@ -101,6 +101,8 @@ static class Program
         PrintHelpEntry("prsync status [path]", "Displays status for repository under [path]. \nIf [path] is not specified current directory is used.");
     }
 
+    static void LogHandler(SyncLogEntry entry) => Console.WriteLine(entry.ToString());
+
     static void Main()
     {
         var args = Environment.GetCommandLineArgs();
@@ -217,19 +219,19 @@ static class Program
         {
             case "status":
                 Console.WriteLine("[Info] Generating repo status...\n");
-                var statusStr = repo.StatusString(Console.WriteLine);
+                var statusStr = repo.StatusString(LogHandler);
                 Console.WriteLine("Status:\n" + statusStr);
                 return;
 
             case "push":
                 Console.WriteLine("[Info] Pushing changes...\n");
-                repo.CommitAndPush(force, Console.WriteLine);
+                repo.CommitAndPush(force, LogHandler);
                 Console.WriteLine("\n[Info] Pushing finished.");
                 return;
 
             case "pull":
                 Console.WriteLine("[Info] Pulling changes...\n");
-                repo.Pull(Console.WriteLine);
+                repo.Pull(LogHandler);
                 Console.WriteLine("\n[Info] Pulling finished.");
                 return;
 

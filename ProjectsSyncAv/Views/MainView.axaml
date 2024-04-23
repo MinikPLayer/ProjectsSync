@@ -4,40 +4,88 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:PRSyncAv.ViewModels"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
-             mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="450"
+			 xmlns:conv="clr-namespace:ProjectsSyncAv.Converters"
+             mc:Ignorable="d"
              x:Class="PRSyncAv.Views.MainView"
              x:DataType="vm:MainViewModel"
              >
+	<UserControl.Resources>
+		<conv:BooleanToBrushConverter x:Key="boolean2brush"/>
+	</UserControl.Resources>
+	
+    <Grid RowDefinitions="150, *">
+		<Grid IsVisible="{Binding IsSetUp, Mode=OneWay}">
+			<i:Icon IsVisible="{Binding IsBusy, Mode=OneWay}" Value="fa-spinner" Animation="Spin" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="15"/>
+			<Button HorizontalAlignment="Left" VerticalAlignment="Top" Margin="7" Background="Transparent" Click="SettingsButton_Click">
+				<i:Icon Value="fa-gear"/>
+			</Button>
+			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
+				<StackPanel HorizontalAlignment="Center" Spacing="5">
+					<StackPanel Orientation="Horizontal" Spacing="5">
+						<i:Icon Value="fa-check" IsVisible="{Binding PullAvailable, Mode=OneWay}" Foreground="{Binding PullAvailableRaw, Converter={StaticResource boolean2brush}, Mode=OneWay}"/>
+						<i:Icon Value="fa-xmark" IsVisible="{Binding PullNotAvailable, Mode=OneWay}" Foreground="{Binding PullAvailableRaw, Converter={StaticResource boolean2brush}, Mode=OneWay}"/>
+						<i:Icon Value="fa-spinner" Animation="Spin" IsVisible="{Binding PullAvailableNotSet, Mode=OneWay}" Foreground="{Binding PullAvailableRaw, Converter={StaticResource boolean2brush}, Mode=OneWay}"/>
 
-    <Grid>
-        <i:Icon IsVisible="{Binding IsBusy, Mode=OneWay}" Value="fa-spinner" Animation="Spin" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="15"/>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
-            <StackPanel HorizontalAlignment="Center">
-                <CheckBox Content="Up to date" IsEnabled="False" IsChecked="{Binding IsUpToDate, Mode=OneWay}" HorizontalAlignment="Left"/>
-                <CheckBox Content="Unmodified locally" IsEnabled="False" IsChecked="{Binding !IsModified, Mode=OneWay}" HorizontalAlignment="Left"/>
-            </StackPanel>
-            <StackPanel  IsEnabled="{Binding !IsBusy, Mode=OneWay}" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
-                <Button Name="PullButton" Click="PullButton_OnClick">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <i:Icon Value="fa-download"/>
-                        <TextBlock Text="Pull"/>
-                    </StackPanel>
-                </Button>
-                <Button x:Name="RefreshButton" Click="RefreshButton_OnClick">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <i:Icon Value="fa-sync"/>
-                        <TextBlock Text="Refresh"/>
-                    </StackPanel>
-                </Button>
-                <Button Name="PushButton">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <i:Icon Value="fa-upload"/>
-                        <TextBlock Text="Push"/>
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-        </StackPanel>
+						<TextBlock>Pull available</TextBlock>
+					</StackPanel>
 
-    </Grid>
+					<StackPanel Orientation="Horizontal" Spacing="5">
+						<i:Icon Value="fa-check" IsVisible="{Binding IsModified, Mode=OneWay}" Foreground="{Binding IsModifiedRaw, Converter={StaticResource boolean2brush}, Mode=OneWay}"/>
+						<i:Icon Value="fa-xmark" IsVisible="{Binding IsNotModified, Mode=OneWay}" Foreground="{Binding IsModifiedRaw, Converter={StaticResource boolean2brush}, Mode=OneWay}"/>
+						<i:Icon Value="fa-spinner" Animation="Spin" IsVisible="{Binding IsModifiedNotSet, Mode=OneWay}" Foreground="{Binding IsModifiedRaw, Converter={StaticResource boolean2brush}, Mode=OneWay}"/>
+
+						<TextBlock>Push available</TextBlock>
+					</StackPanel>
+				</StackPanel>
+
+				<StackPanel  IsEnabled="{Binding !IsBusy, Mode=OneWay}" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
+					<Button Name="PullButton" Click="PullButton_OnClick" Background="{Binding PullAvailable, Mode=OneWay, Converter={StaticResource boolean2brush}, ConverterParameter='Green;#30FFFFFF'}">
+						<StackPanel Orientation="Horizontal" Spacing="5"> 
+							<i:Icon Value="fa-download"/>
+							<TextBlock Text="Pull"/>
+						</StackPanel>
+					</Button>
+
+					<Button x:Name="RefreshButton" Click="RefreshButton_OnClick">
+						<StackPanel Orientation="Horizontal" Spacing="5">
+							<i:Icon Value="fa-sync"/>
+							<TextBlock Text="Refresh"/>
+						</StackPanel>
+					</Button>
+					
+					<Button Name="PushButton" Click="PushButton_OnClick" Background="{Binding IsModified, Mode=OneWay, Converter={StaticResource boolean2brush}, ConverterParameter='Green;#30FFFFFF'}">
+						<StackPanel Orientation="Horizontal" Spacing="5">
+							<i:Icon Value="fa-upload"/>
+							<TextBlock Text="Push"/>
+						</StackPanel>
+					</Button>
+				</StackPanel>
+
+			</StackPanel>
+
+			<Grid ColumnDefinitions="*, 50" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="5">
+				<TextBlock Grid.Column="0" Foreground="Gray" Text="{Binding CurrentLogText, Mode=OneWay}" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+
+				<Button Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="ExpandButton_Click">
+					<Panel>
+						<i:Icon Value="fa-angles-down" IsVisible="{Binding !IsExpanded, Mode=OneWay}"/>
+						<i:Icon Value="fa-angles-up" IsVisible="{Binding IsExpanded, Mode=OneWay}"/>
+					</Panel>
+				</Button>
+			</Grid>
+
+		</Grid>
+		<StackPanel IsVisible="{Binding !IsSetUp, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<TextBlock TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Waiting for the Setup to complete..."/>
+			<i:Icon Value="fa-spinner" Animation="Spin" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="15" FontSize="32"/>
+		</StackPanel>
+
+		<Border Background="#30FFFFFF" Grid.Row="1" IsVisible="{Binding IsExpanded, Mode=OneWay}" >
+			<ScrollViewer MaxHeight="800">
+				<TextBlock Text="{Binding LogsText, Mode=OneWay}" Margin="5"/>
+			</ScrollViewer>
+		</Border>
+		
+	</Grid>
 
 </UserControl>

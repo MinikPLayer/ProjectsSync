@@ -10,14 +10,22 @@ using System;
 using System.Diagnostics;
 using Avalonia.Controls;
 using System.Runtime.Versioning;
+using ProjectsSyncAv.Views;
 
 namespace PRSyncAv;
 
-[SupportedOSPlatform("Linux")]
-[SupportedOSPlatform("Windows")]
 public partial class App : Application
 {
-    public AppConfig CurrentConfig;
+    private static AppConfig _currentConfig;
+    public static AppConfig CurrentConfig
+    {
+        get => _currentConfig;
+        set
+        {
+            _currentConfig = value;
+            _currentConfig.Save();
+        }
+    }
 
     public override void Initialize()
     {
@@ -48,11 +56,7 @@ public partial class App : Application
     {
         if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
 
-        desktop.MainWindow ??= new MainWindow()
-        {
-            DataContext = new MainViewModel(),
-        };
-
+        desktop.MainWindow ??= new MainWindow();
         desktop.MainWindow.Show();
     }
 
@@ -71,4 +75,6 @@ public partial class App : Application
     private void RestoreWindowMenuItemOnClick(object? sender, EventArgs e) => RestoreWindow();
 
     private void ExitMenuItemOnClick(object? sender, EventArgs e) => ExitApplication();
+
+    private void TrayIcon_Clicked(object? sender, System.EventArgs e) => RestoreWindow();
 }

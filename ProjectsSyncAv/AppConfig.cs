@@ -1,3 +1,4 @@
+using ProjectsSyncLib;
 using System;
 using System.IO;
 using System.Text.Json;
@@ -13,6 +14,23 @@ public struct AppConfig
 
     public string ToJson() => JsonSerializer.Serialize(this);
     public static AppConfig? FromJson(string json) => JsonSerializer.Deserialize<AppConfig>(json);
+
+    public (bool isGood, string errorString) VerifyConfig()
+    {
+        if(string.IsNullOrEmpty(EmailAddress))
+            return (false, "Email address is not set.");
+
+        if (string.IsNullOrEmpty(RepoPath))
+            return (false, "Repo path is not set.");
+
+        if (!Directory.Exists(RepoPath))
+            return (false, "Repo path doesn't exist.");
+
+        if (!SyncDirectory.VerifyDirectory(RepoPath))
+            return (false, $"SyncDirectory cannot open {RepoPath} as a repository.");
+
+        return (true, "");
+    }
 
     public void Save()
     {

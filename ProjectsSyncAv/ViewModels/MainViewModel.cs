@@ -8,26 +8,85 @@ using LibGit2Sharp;
 using PRSyncAv.Views;
 using ProjectsSyncLib;
 using ReactiveUI;
+using ProjectsSyncAv.Views;
+using Avalonia.Threading;
+using System.ComponentModel.DataAnnotations;
+using System.Collections.ObjectModel;
 
 namespace PRSyncAv.ViewModels;
 
-[SupportedOSPlatform("Linux")]
-[SupportedOSPlatform("Windows")]
 public class MainViewModel : ViewModelBase
 {
-    private bool _isUpToDate = false;
-    public bool IsUpToDate
+
+    private bool? _pullAvailable = null;
+    public bool PullAvailableNotSet => _pullAvailable == null;
+    public bool PullNotAvailable => _pullAvailable != null && _pullAvailable.Value == false;
+    public bool? PullAvailableRaw => _pullAvailable;
+    public bool? PullAvailable
     {
-        get => _isUpToDate;
-        set => this.RaiseAndSetIfChanged(ref _isUpToDate, value);
+        get => _pullAvailable != null && _pullAvailable.Value;
+        set
+        {
+            if (value == _pullAvailable)
+                return;
+
+            _pullAvailable = value;
+            this.RaisePropertyChanged(nameof(PullAvailable));
+            this.RaisePropertyChanged(nameof(PullNotAvailable));
+            this.RaisePropertyChanged(nameof(PullAvailableNotSet));
+            this.RaisePropertyChanged(nameof(PullAvailableRaw));
+        }
     }
 
-    private bool _isModified = false;
-    public bool IsModified
+    private bool? _isModified = null;
+    public bool IsModifiedNotSet => _isModified == null;
+    public bool IsNotModified => _isModified != null && _isModified.Value == false;
+    public bool? IsModifiedRaw => _isModified;
+    public bool? IsModified
     {
-        get => _isModified;
-        set => this.RaiseAndSetIfChanged(ref _isModified, value);
+        get => _isModified != null && _isModified.Value;
+        set
+        {
+            if (value == _isModified)
+                return;
+
+            _isModified = value;
+            this.RaisePropertyChanged(nameof(IsModified));
+            this.RaisePropertyChanged(nameof(IsNotModified));
+            this.RaisePropertyChanged(nameof(IsModifiedNotSet));
+            this.RaisePropertyChanged(nameof(IsModifiedRaw));
+        }
     }
+
+    private bool _IsSetUp = false;
+    public bool IsSetUp
+    {
+        get => _IsSetUp;
+        set => this.RaiseAndSetIfChanged(ref _IsSetUp, value);
+    }
+
+    private bool _IsExpanded = true;
+    public bool IsExpanded
+    {
+        get => _IsExpanded;
+        set => this.RaiseAndSetIfChanged(ref _IsExpanded, value);
+    }
+
+
+    private string _LogsText = "";
+    public string LogsText
+    {
+        get => _LogsText;
+        set => this.RaiseAndSetIfChanged(ref _LogsText, value);
+    }
+
+    private string _CurrentLogText = "";
+    public string CurrentLogText
+    {
+        get => _CurrentLogText;
+        set => this.RaiseAndSetIfChanged(ref _CurrentLogText, value);
+    }
+
 
     private SyncDirectory? _syncDirectory;
     public SyncDirectory SyncDirectory
@@ -37,28 +96,27 @@ public class MainViewModel : ViewModelBase
             if (_syncDirectory == null)
                 throw new Exception("Sync directory not set.");
 
-            if (_username == null)
-                throw new Exception("Username not set.");
-
-            if (_password == null)
-                throw new Exception("Password not set.");
-
             return _syncDirectory;
         }
         set => _syncDirectory = value;
     }
 
-    private string? _username = null;
-    private string? _password = null;
-
     private UsernamePasswordCredentials GetCredentials(string url)
     {
-        if (_username == null || _password == null)
-        {
-            throw new Exception("Credentials not set.");
-        }
+        if (MainWindow.Current == null)
+            throw new NullReferenceException("MainWindow.Current shouldn't be null!");
 
-        return new UsernamePasswordCredentials() { Username = _username, Password = _password };
+        var creds = Dispatcher.UIThread.Invoke(async () =>
+        {
+            var newWindow = new CredentialsWindow(url);
+            await newWindow.ShowDialog(MainWindow.Current);
+            return newWindow.Result;
+        }).Result;
+
+        if (creds == null || !creds.HasValue)
+            return new UsernamePasswordCredentials();
+
+        return new UsernamePasswordCredentials() { Username = creds.Value.Username, Password = creds.Value.Password };
     }
 
     private bool _isBusy = false;
@@ -68,26 +126,58 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _isBusy, value);
     }
 
-    public async void Pull()
+    private void LogAction(SyncLogEntry log)
+    {
+        // TODO: Add logging
+        Debug.WriteLine(log);
+
+        // Logs.Insert(0, log);
+        var logText = log.ToString();
+        LogsText = logText + "\n" + LogsText;
+        CurrentLogText = logText;
+    }
+
+    public async Task Pull()
     {
         Debug.WriteLine("[MOCK] Pull");
         IsBusy = true;
         await Task.Run(() =>
         {
-            SyncDirectory.Pull(Console.WriteLine);
+            LogAction(SyncLogEntry.Trace("Pulling changes..."));
+            SyncDirectory.Pull(LogAction);
+            LogAction(SyncLogEntry.Trace("Pulling complete!"));
         });
         IsBusy = false;
     }
 
-    public async void Refresh()
+    public async Task Refresh()
     {
         IsBusy = true;
+
+        IsModified = null;
+        PullAvailable = null;
         await Task.Run(() =>
         {
+            LogAction(SyncLogEntry.Trace("Checking if up to date..."));
+            PullAvailable = !SyncDirectory.IsUpToDate(LogAction);
+            LogAction(SyncLogEntry.Trace("Check if is modified..."));
             IsModified = SyncDirectory.IsModified();
-            IsUpToDate = SyncDirectory.IsUpToDate();
+            LogAction(SyncLogEntry.Trace("Refresh complete!"));
         });
         IsBusy = false;
+    }
+
+    public async Task Push(bool force = false)
+    {
+        IsBusy = true;
+
+        await Task.Run(() =>
+        {
+            LogAction(SyncLogEntry.Trace("Pushing changes..."));
+            SyncDirectory.CommitAndPush(force, LogAction);
+            LogAction(SyncLogEntry.Trace("Push complete!"));
+        });
+        await Refresh();
     }
 
     public void Set(string directory, string email)
@@ -95,6 +185,8 @@ public class MainViewModel : ViewModelBase
         var identity = new Identity("ProjectsSync2Av", email);
         var signature = new Signature(identity, DateTime.Now);
         _syncDirectory = SyncDirectory.Open(directory, signature, GetCredentials, true);
+        IsSetUp = true;
+        Refresh();
     }
 
     public MainViewModel() { }

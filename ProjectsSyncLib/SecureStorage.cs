@@ -20,11 +20,13 @@ public static class SecureStorage
         string tag = $"PRSync credentials for \"{url}\"";
         if(OperatingSystem.IsLinux())
         {
-            return new CM.LinuxCredential(url, credsJson, tag, collection: COLLECTION_NAME);
+            return new LinuxCredential(url, credsJson, tag, collection: COLLECTION_NAME);
         }
         else if(OperatingSystem.IsWindows())
         {
-            return new CM.WinCredential(url, credsJson, tag, CredentialType.Generic);
+            var creds = new WinCredential(url, credsJson, tag, CredentialType.Generic);
+            creds.PersistenceType = PersistenceType.LocalComputer;
+            return creds;
         }
         else
         {
