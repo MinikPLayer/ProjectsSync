@@ -142,7 +142,7 @@ public class SyncDirectory
             var sd = Open(directory, dummySignature, (p) => { return null!; }, false);
             return true;
         }
-        catch (ArgumentException e)
+        catch (ArgumentException)
         {
             return false;
         }
@@ -413,11 +413,8 @@ public class SyncDirectory
         TryWithAuth(() => Commands.Fetch(_repo, "origin", new List<string>(), options, ""), logHandler);
     }
 
-    public void Pull(LogHandler logHandler, bool addAll = true)
+    public void Pull(LogHandler logHandler)
     {
-        if (addAll)
-            AddAll(logHandler);
-
         var options = new PullOptions
         {
             FetchOptions = GetFetchOptions(logHandler),
